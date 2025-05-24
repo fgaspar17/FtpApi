@@ -23,8 +23,6 @@ namespace FtpApi.IntegrationTests.ServicesTests;
 public class RegisterServiceIntegrationTests
 {
     private readonly UserManager<ApiUser> _userManager;
-    private readonly IValidator<UserRegisterDto> _validator;
-    private readonly ILogger<RegisterService> _logger;
     private readonly RegisterService _registerService;
     private readonly ServiceProvider _serviceProvider;
 
@@ -60,14 +58,14 @@ public class RegisterServiceIntegrationTests
         _serviceProvider = services.BuildServiceProvider();
 
         _userManager = _serviceProvider.GetRequiredService<UserManager<ApiUser>>();
-        _validator = _serviceProvider.GetRequiredService<IValidator<UserRegisterDto>>();
-        _logger = loggerMocked.Object;
+        var validator = _serviceProvider.GetRequiredService<IValidator<UserRegisterDto>>();
+        var logger = loggerMocked.Object;
 
         var db = _serviceProvider.GetRequiredService<AppDbContext>();
         db.Database.Migrate();
         db.Database.EnsureCreated();
 
-        _registerService = new RegisterService(_validator, _userManager, _logger);
+        _registerService = new RegisterService(validator, _userManager, logger);
     }
 
     [Fact]
