@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.TestHelper;
+﻿using FluentValidation.TestHelper;
 using FtpApi.Application.DTOs;
 using FtpApi.Application.Validators;
 
@@ -15,7 +9,7 @@ public class UserRegisterValidatorTests
     private readonly UserRegisterValidator _validator = new();
 
     [Fact]
-    public void Should_Pass_With_Valid_Input()
+    public void Validate_ShouldPass_WhenInputIsValid()
     {
         var dto = new UserRegisterDto
         {
@@ -29,7 +23,7 @@ public class UserRegisterValidatorTests
     }
 
     [Fact]
-    public void Should_Fail_When_UserName_Is_Empty()
+    public void Validate_ShouldHaveError_WhenUserNameIs_Empty()
     {
         var dto = new UserRegisterDto
         {
@@ -39,11 +33,12 @@ public class UserRegisterValidatorTests
         };
 
         var result = _validator.TestValidate(dto);
+
         result.ShouldHaveValidationErrorFor(x => x.UserName);
     }
 
     [Fact]
-    public void Should_Fail_When_Password_Too_Short()
+    public void Validate_ShouldHaveError_WhenPasswordTooShort()
     {
         var dto = new UserRegisterDto
         {
@@ -61,7 +56,7 @@ public class UserRegisterValidatorTests
     [InlineData("ALLUPPERCASE1!")]
     [InlineData("NoNumber!")]
     [InlineData("NoSpecial123")]
-    public void Should_Fail_When_Password_Missing_Required_Complexity(string password)
+    public void Validate_ShouldHaveError_WhenPasswordMissingRequiredComplexity(string password)
     {
         var dto = new UserRegisterDto
         {
@@ -75,7 +70,7 @@ public class UserRegisterValidatorTests
     }
 
     [Fact]
-    public void Should_Fail_When_Passwords_Do_Not_Match()
+    public void Validate_ShouldFail_WhenPasswordsDoNotMatch()
     {
         var dto = new UserRegisterDto
         {

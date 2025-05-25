@@ -3,7 +3,7 @@ using FtpApi.Application.DTOs;
 
 namespace FtpApi.Application.Validators;
 
-internal class UserLoginValidator : AbstractValidator<UserLoginDto>
+public class UserLoginValidator : AbstractValidator<UserLoginDto>
 {
     public UserLoginValidator()
     {

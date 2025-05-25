@@ -32,6 +32,7 @@ builder.Services.AddIdentity<ApiUser, IdentityRole>()
 builder.Services.AddAuthenticationServices(builder.Configuration);
 
 builder.Services.AddScoped<AbstractValidator<UserRegisterDto>, UserRegisterValidator>();
+builder.Services.AddScoped<AbstractValidator<UserLoginDto>, UserLoginValidator>();
 
 var app = builder.Build();
 
@@ -49,7 +50,7 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
-app.MapAuthentication(app.Logger);
+app.MapAuthentication(app.Configuration);
 
 var summaries = new[]
 {

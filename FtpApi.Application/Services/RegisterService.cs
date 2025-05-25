@@ -48,6 +48,8 @@ public class RegisterService
 
         _logger.LogInformation("User successfully registered: {UserName}", registerDto.UserName);
 
+        user = await _userManager.FindByNameAsync(user.UserName);
+
         return user;
     }
 }

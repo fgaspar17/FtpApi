@@ -8,11 +8,20 @@ namespace FtpApi.Endpoints;
 
 public static class AuthEndpoints
 {
-    public static void MapAuthentication(this WebApplication app, ILogger logger)
+    public static void MapAuthentication(this WebApplication app, IConfiguration config)
     {
-        app.MapGet("/api/login", () =>
+        app.MapPost("/api/login", async (UserLoginDto input) =>
         {
-            return "test";
+            using var scope = app.Services.CreateScope();
+            var service = new LoginService(
+                scope.ServiceProvider.GetService<AbstractValidator<UserLoginDto>>(),
+                scope.ServiceProvider.GetService<UserManager<ApiUser>>(),
+                scope.ServiceProvider.GetService<ILogger<LoginService>>()
+                );
+
+            var token = await service.Login(input, config);
+
+            return new { Token = token };
         });
 
         app.MapPost("/api/register", async (UserRegisterDto input) =>

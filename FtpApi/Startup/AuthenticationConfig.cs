@@ -19,7 +19,8 @@ public static class AuthenticationConfig
                     ValidAudience = config["JWT:Audience"],
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        System.Text.Encoding.UTF8.GetBytes(config["JWT:SigningKey"]))
+                        System.Text.Encoding.UTF8.GetBytes(config["JWT:SigningKey"])),
+                    
                 };
             });
     }
