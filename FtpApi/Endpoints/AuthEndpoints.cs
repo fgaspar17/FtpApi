@@ -14,7 +14,7 @@ public static class AuthEndpoints
         {
             using var scope = app.Services.CreateScope();
             var service = new LoginService(
-                scope.ServiceProvider.GetService<AbstractValidator<UserLoginDto>>(),
+                scope.ServiceProvider.GetService<IValidator<UserLoginDto>>(),
                 scope.ServiceProvider.GetService<UserManager<ApiUser>>(),
                 scope.ServiceProvider.GetService<ILogger<LoginService>>()
                 );
@@ -28,7 +28,7 @@ public static class AuthEndpoints
         {
             using var scope = app.Services.CreateScope();
             var service = new RegisterService(
-                scope.ServiceProvider.GetService<AbstractValidator<UserRegisterDto>>(),
+                scope.ServiceProvider.GetService<IValidator<UserRegisterDto>>(),
                 scope.ServiceProvider.GetService<UserManager<ApiUser>>(),
                 scope.ServiceProvider.GetService<ILogger<RegisterService>>()
                 );

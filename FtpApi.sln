@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpApi.Application", "FtpAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpApi.IntegrationTests", "FtpApi.IntegrationTests\FtpApi.IntegrationTests.csproj", "{6F305E66-8191-43E1-88CE-89ACC0D230E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpApi.FtpServer", "FtpApi.FtpServer\FtpApi.FtpServer.csproj", "{099BC27E-C14A-49F9-ABA1-592A1E3208BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{6F305E66-8191-43E1-88CE-89ACC0D230E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F305E66-8191-43E1-88CE-89ACC0D230E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F305E66-8191-43E1-88CE-89ACC0D230E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{099BC27E-C14A-49F9-ABA1-592A1E3208BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{099BC27E-C14A-49F9-ABA1-592A1E3208BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{099BC27E-C14A-49F9-ABA1-592A1E3208BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{099BC27E-C14A-49F9-ABA1-592A1E3208BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

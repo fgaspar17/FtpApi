@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 
 namespace FtpApi.IntegrationTests.ServicesTests;
@@ -108,6 +109,6 @@ public class LoginServiceIntegrationTests
         Assert.Equal(jwtToken.Issuer, _configuration["JWT:Issuer"]);
         Assert.True(jwtToken.Audiences.Any(a => a == _configuration["JWT:Audience"]));
         Assert.True(jwtToken.ValidTo > DateTime.UtcNow);
-        Assert.Equal("HS256", jwtToken.Header.Alg);
+        Assert.Equal(SecurityAlgorithms.HmacSha256, jwtToken.Header.Alg);
     }
 }

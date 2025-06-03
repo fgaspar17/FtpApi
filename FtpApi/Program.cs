@@ -1,14 +1,18 @@
+using System.Security.Claims;
+using FluentFTP;
 using FluentValidation;
 using FtpApi.Application.DTOs;
+using FtpApi.Application.Services;
+using FtpApi.Application.Utils;
 using FtpApi.Application.Validators;
 using FtpApi.Data;
 using FtpApi.Data.Models;
 using FtpApi.Endpoints;
 using FtpApi.Middlewares;
 using FtpApi.Startup;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +27,7 @@ builder.Host.UseSerilog((context, configuration) =>
 builder.Services.AddOpenApiServices();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("AppDbContext"), 
+    options.UseSqlite(builder.Configuration.GetConnectionString("AppDbContext"),
     x => x.MigrationsAssembly("FtpApi.Migrations")));
 
 builder.Services.AddIdentity<ApiUser, IdentityRole>()
@@ -31,8 +35,22 @@ builder.Services.AddIdentity<ApiUser, IdentityRole>()
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
 
-builder.Services.AddScoped<AbstractValidator<UserRegisterDto>, UserRegisterValidator>();
-builder.Services.AddScoped<AbstractValidator<UserLoginDto>, UserLoginValidator>();
+builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<FtpUtils>();
+
+builder.Services.AddScoped<IValidator<UserRegisterDto>, UserRegisterValidator>();
+builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
+builder.Services.AddScoped<IValidator<FileUploadDto>, FileUploadValidator>();
+
+
+builder.Services.Configure<FtpApi.Application.Config.FtpConfig>(builder.Configuration.GetSection("FtpConfig"));
+
+builder.Services.AddScoped<IFileUploadService, FileUploadFtpService>();
+builder.Services.AddScoped<IFileDeleteService, FileDeleteFtpService>();
+builder.Services.AddScoped<IFileGetFilesService, FileGetFilesFtpService>();
+builder.Services.AddScoped<IFileDownloadService, FileDownloadFtpService>();
+
 
 var app = builder.Build();
 
@@ -45,35 +63,30 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<RequestLogContextMiddleware>();
 
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
 app.MapAuthentication(app.Configuration);
+app.MapFileEndpoints();
 
-var summaries = new[]
+app.MapGet("/reset-database", () =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetService<AppDbContext>();
+    context.FileMetadatas.ExecuteDelete();
 })
-.WithName("GetWeatherForecast");
+.WithName("reset");
+
+app.MapGet("/test-auth", [Authorize] (ClaimsPrincipal user) =>
+{
+    return Results.Ok(new
+    {
+        Authenticated = user.Identity?.IsAuthenticated,
+        User = user.Identity?.Name
+    });
+});
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
