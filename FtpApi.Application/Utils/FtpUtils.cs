@@ -13,9 +13,10 @@ public class FtpUtils
         {
             client.Host = config.Host;
             client.Credentials = new NetworkCredential(config.Username, config.Password);
+            client.Port = config.Port;
 
             await client.Connect(ct);
-            // TODO: Create folder per user
+            await client.CreateDirectory("/files", force: false, ct);
             await client.SetWorkingDirectory("/files", ct);
             await client.UploadStream(file.OpenReadStream(), Path.Combine(userId, file.FileName), FtpRemoteExists.Overwrite, createRemoteDir: true, token: ct);
         }
@@ -27,6 +28,7 @@ public class FtpUtils
         {
             client.Host = config.Host;
             client.Credentials = new NetworkCredential(config.Username, config.Password);
+            client.Port = config.Port;
 
             await client.Connect(ct);
             // TODO: folder per user
@@ -41,6 +43,7 @@ public class FtpUtils
         {
             client.Host = config.Host;
             client.Credentials = new NetworkCredential(config.Username, config.Password);
+            client.Port = config.Port;
 
             await client.Connect(ct);
             // TODO: folder per user

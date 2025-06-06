@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace FtpApi.Application.Utils;
 
-internal class HashUtils
+public class HashUtils
 {
     public async Task<byte[]> ComputeFileHash(IFormFile file)
     {
