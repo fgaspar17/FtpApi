@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 using FtpApi.Application.DTOs;
+using FtpApi.Application.Exceptions;
+using FtpApi.Application.Extensions;
 using FtpApi.Application.Mappers;
 using FtpApi.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -34,16 +36,17 @@ public class RegisterService
     {
         _logger.LogInformation("User registration attempt for: {UserName}", registerDto.UserName);
 
-        _validator.ValidateAndThrow(registerDto);
+        await _validator.ValidateAndThrowCustomAsync(registerDto);
 
         var user = RegisterMapper.Map(registerDto);
         var result = await _userManager.CreateAsync(user, registerDto.Password);
 
         if (!result.Succeeded)
         {
-            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            var errorMessage = string.Join("; ", errors);
             _logger.LogError("Failed to register user {UserName}. Errors: {Errors}", registerDto.UserName, errors);
-            throw new InvalidOperationException($"User registration failed: {errors}");
+            throw new UserRegistrationException($"User registration failed: {errors}", errors);
         }
 
         _logger.LogInformation("User successfully registered: {UserName}", registerDto.UserName);

@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using FluentValidation;
 using FtpApi.Application.DTOs;
+using FtpApi.Application.Exceptions;
 using FtpApi.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +34,7 @@ namespace FtpApi.Application.Services
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
 
             if (user is null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
-                throw new InvalidOperationException("Invalid login attemp");
+                throw new CustomValidationException("Invalid login attemp");
 
             user = await _userManager.FindByNameAsync(loginDto.UserName);
 

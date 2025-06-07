@@ -1,4 +1,5 @@
-﻿using FtpApi.Application.Utils;
+﻿using FtpApi.Application.Exceptions;
+using FtpApi.Application.Utils;
 using FtpApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,7 @@ public class FileDeleteFtpService : IFileDeleteService
     public async Task Delete(string userId, string fileName, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(fileName))
-            throw new InvalidOperationException();
+            throw new CustomValidationException("Filename is empty.");
 
         var files = _context.FileMetadatas.ToList();
 
@@ -35,7 +36,7 @@ public class FileDeleteFtpService : IFileDeleteService
             .SingleOrDefaultAsync(f => f.FileName.Trim().ToLower() == fileName.Trim().ToLower());
 
         if (fileToDelete is null)
-            throw new InvalidOperationException();
+            throw new CustomValidationException("Filename not found.");
 
         fileToDelete.IsDeleted = true;
 

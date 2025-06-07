@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentFTP;
 using FtpApi.Application.Constants;
+using FtpApi.Application.Exceptions;
 using FtpApi.Application.Utils;
 using FtpApi.Data;
 using Microsoft.AspNetCore.Http;
@@ -32,7 +33,7 @@ public class FileDownloadFtpService : IFileDownloadService
     {
         if (!await _context.FileMetadatas
             .AnyAsync(f => f.FileName.Trim().ToLower() == filename.Trim().ToLower()))
-            throw new InvalidOperationException();
+            throw new CustomValidationException("Filename not found.");
 
         return await _ftpUtils.Download(_ftpConfig.Value, userId, filename, ct);
     }

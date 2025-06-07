@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FtpApi.Application.DTOs;
+using FtpApi.Application.Extensions;
 using FtpApi.Application.Mappers;
 using FtpApi.Application.Utils;
 using FtpApi.Data;
@@ -37,7 +38,7 @@ public class FileUploadFtpService : IFileUploadService
 
     public async Task Upload(FileUploadDto fileDto, string userId, CancellationToken ct)
     {
-        _validator.ValidateAndThrow(fileDto);
+        _validator.ValidateAndThrowCustomAsync(fileDto);
 
         var hashUtils = new HashUtils();
         var hash = await hashUtils.ComputeFileHash(fileDto.File!);
