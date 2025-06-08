@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using FluentFTP;
 using FluentValidation;
 using FtpApi.Application.DTOs;
+using FtpApi.Application.Exceptions;
 using FtpApi.Application.Services;
 using FtpApi.Application.Utils;
 using FtpApi.Application.Validators;
@@ -60,6 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseOpenApi();
 }
 
+app.UseExceptionHandler("/error");
+
 app.UseMiddleware<RequestLogContextMiddleware>();
 
 app.UseAuthentication();
@@ -69,6 +71,7 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
+app.MapErrorEndpoint();
 app.MapAuthentication(app.Configuration);
 app.MapFileEndpoints();
 
@@ -80,13 +83,9 @@ app.MapGet("/reset-database", () =>
 })
 .WithName("reset");
 
-app.MapGet("/test-auth", [Authorize] (ClaimsPrincipal user) =>
+app.MapGet("/test-error", () =>
 {
-    return Results.Ok(new
-    {
-        Authenticated = user.Identity?.IsAuthenticated,
-        User = user.Identity?.Name
-    });
+    throw new Exception();
 });
 
 app.Run();
