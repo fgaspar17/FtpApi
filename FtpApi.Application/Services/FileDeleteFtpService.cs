@@ -25,23 +25,36 @@ public class FileDeleteFtpService : IFileDeleteService
         _ftpUtils = ftpUtils;
         _ftpConfig = ftpConfig;
     }
-    public async Task Delete(string userId, string fileName, CancellationToken ct)
+    public async Task Delete(string userId, string filename, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(fileName))
-            throw new CustomValidationException("Filename is empty.");
+        try
+        {
+            if (string.IsNullOrWhiteSpace(filename))
+                throw new CustomValidationException("Filename is empty.");
 
-        var files = _context.FileMetadatas.ToList();
+            var fileToDelete = await _context.FileMetadatas
+                .SingleOrDefaultAsync(f => f.FileName.Trim().ToLower() == filename.Trim().ToLower());
 
-        var fileToDelete = await _context.FileMetadatas
-            .SingleOrDefaultAsync(f => f.FileName.Trim().ToLower() == fileName.Trim().ToLower());
+            if (fileToDelete is null)
+                throw new CustomValidationException("Filename not found.");
 
-        if (fileToDelete is null)
-            throw new CustomValidationException("Filename not found.");
+            await _ftpUtils.Delete(_ftpConfig.Value, userId, fileToDelete.FileName, ct);
+            _logger.LogInformation("File {filename} deleted from the FTP server by {userId}.", filename, userId);
 
-        fileToDelete.IsDeleted = true;
-
-        await _ftpUtils.Delete(_ftpConfig.Value, userId, fileToDelete.FileName, ct);
-        _context.FileMetadatas.Update(fileToDelete);
-        await _context.SaveChangesAsync();
+            fileToDelete.IsDeleted = true;
+            _context.FileMetadatas.Update(fileToDelete);
+            await _context.SaveChangesAsync(ct);
+            _logger.LogInformation("File {filename} deleted from the database by {userId}.", filename, userId);
+        }
+        catch (CustomValidationException ex)
+        {
+            _logger.LogWarning(ex, "Error trying to validate the {filename} provided by {userId}.", filename, userId);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error trying to delete file {filename} by {userId}.", filename, userId);
+            throw;
+        }
     }
 }

@@ -17,11 +17,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, configuration) =>
-{
-    configuration.ReadFrom.Configuration(context.Configuration);
-});
-
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApiServices();
@@ -29,6 +24,11 @@ builder.Services.AddOpenApiServices();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("AppDbContext"),
     x => x.MigrationsAssembly("FtpApi.Migrations")));
+
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
 
 builder.Services.AddIdentity<ApiUser, IdentityRole>()
  .AddEntityFrameworkStores<AppDbContext>();

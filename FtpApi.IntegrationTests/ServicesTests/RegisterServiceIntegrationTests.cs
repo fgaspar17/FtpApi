@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using FluentValidation;
 using FtpApi.Application.DTOs;
+using FtpApi.Application.Exceptions;
 using FtpApi.Application.Services;
 using FtpApi.Application.Validators;
 using FtpApi.Data;
 using FtpApi.Data.Models;
-using FtpApi.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -88,7 +83,7 @@ public class RegisterServiceIntegrationTests
         Assert.NotNull(userInDb);
     }
 
-    
+
     [Fact]
     public async Task Register_ShouldReturnError_WhenUserExists()
     {
@@ -111,7 +106,7 @@ public class RegisterServiceIntegrationTests
 
         // Act
         // Assert
-        await Assert.ThrowsAnyAsync<InvalidOperationException>(() => _registerService.Register(dtoExists));
+        await Assert.ThrowsAnyAsync<UserRegistrationException>(() => _registerService.Register(dtoExists));
     }
 
     public void Dispose()
