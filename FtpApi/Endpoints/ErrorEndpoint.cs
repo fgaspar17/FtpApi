@@ -1,6 +1,4 @@
-﻿using FtpApi.Application.DTOs;
-using FtpApi.Application.Exceptions;
-using FtpApi.Application.Services;
+﻿using FtpApi.Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +20,7 @@ public static class ErrorEndpoint
 
             var factory = new ProblemDetailsFactory();
             var details = factory.ProblemDetailsFactoryMethod(exceptionHandler, context);
-            
+
             return Results.Problem(details);
         });
     }

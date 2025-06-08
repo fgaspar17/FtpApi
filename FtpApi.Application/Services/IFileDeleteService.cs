@@ -1,6 +1,4 @@
-﻿using FtpApi.Application.DTOs;
-
-namespace FtpApi.Application.Services;
+﻿namespace FtpApi.Application.Services;
 
 public interface IFileDeleteService
 {

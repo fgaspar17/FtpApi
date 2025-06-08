@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FtpApi.Application.DTOs;
+﻿using FtpApi.Application.DTOs;
 using FtpApi.Data.Enums;
 using FtpApi.Data.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace FtpApi.Application.Mappers;
 

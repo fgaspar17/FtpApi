@@ -1,5 +1,4 @@
-﻿using FtpApi.Application.Constants;
-using FtpApi.Application.Exceptions;
+﻿using FtpApi.Application.Exceptions;
 using FtpApi.Application.Utils;
 using FtpApi.Data;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +49,6 @@ public class FileDownloadFtpService : IFileDownloadService
             _logger.LogError(ex, "Error trying to download file {filename} by {userId}.", filename, userId);
             throw;
         }
-        
+
     }
 }

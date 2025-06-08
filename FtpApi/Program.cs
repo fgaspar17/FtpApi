@@ -1,16 +1,9 @@
-using System.Security.Claims;
-using FluentValidation;
-using FtpApi.Application.DTOs;
-using FtpApi.Application.Exceptions;
-using FtpApi.Application.Services;
 using FtpApi.Application.Utils;
-using FtpApi.Application.Validators;
 using FtpApi.Data;
 using FtpApi.Data.Models;
 using FtpApi.Endpoints;
 using FtpApi.Middlewares;
 using FtpApi.Startup;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -34,22 +27,13 @@ builder.Services.AddIdentity<ApiUser, IdentityRole>()
  .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
-
 builder.Services.AddAuthorization();
 
+builder.Services.AddValidators();
+
 builder.Services.AddScoped<FtpUtils>();
-
-builder.Services.AddScoped<IValidator<UserRegisterDto>, UserRegisterValidator>();
-builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
-builder.Services.AddScoped<IValidator<FileUploadDto>, FileUploadValidator>();
-
-
 builder.Services.Configure<FtpApi.Application.Config.FtpConfig>(builder.Configuration.GetSection("FtpConfig"));
-
-builder.Services.AddScoped<IFileUploadService, FileUploadFtpService>();
-builder.Services.AddScoped<IFileDeleteService, FileDeleteFtpService>();
-builder.Services.AddScoped<IFileGetFilesService, FileGetFilesFtpService>();
-builder.Services.AddScoped<IFileDownloadService, FileDownloadFtpService>();
+builder.Services.AddFileFtpServices();
 
 
 var app = builder.Build();
@@ -74,18 +58,5 @@ app.UseHttpsRedirection();
 app.MapErrorEndpoint();
 app.MapAuthentication(app.Configuration);
 app.MapFileEndpoints();
-
-app.MapGet("/reset-database", () =>
-{
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetService<AppDbContext>();
-    context.FileMetadatas.ExecuteDelete();
-})
-.WithName("reset");
-
-app.MapGet("/test-error", () =>
-{
-    throw new Exception();
-});
 
 app.Run();

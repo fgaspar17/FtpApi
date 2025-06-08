@@ -112,4 +112,3 @@ public class FtpTestFixture : IAsyncLifetime
         await _sharedConnection.DisposeAsync();
     }
 }
-

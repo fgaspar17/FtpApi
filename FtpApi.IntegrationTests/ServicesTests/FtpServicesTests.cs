@@ -2,7 +2,6 @@
 using FtpApi.Application.Utils;
 using FtpApi.Data;
 using FtpApi.IntegrationTests.Helpers;
-using ICSharpCode.SharpZipLib.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -116,5 +115,4 @@ public class FtpServicesTests : IClassFixture<FtpTestFixture>
 
         Assert.Equal(originalHash, computedHashBase64);
     }
-
 }

@@ -6,7 +6,6 @@ namespace FtpApi.Application.Utils;
 
 public class FtpUtils
 {
-
     public async Task Upload(Config.FtpConfig config, string userId, IFormFile file, CancellationToken ct)
     {
         using (var client = new AsyncFtpClient())
@@ -31,7 +30,6 @@ public class FtpUtils
             client.Port = config.Port;
 
             await client.Connect(ct);
-            // TODO: folder per user
             await client.SetWorkingDirectory("/files", ct);
             await client.DeleteFile(Path.Combine(userId, fileName), token: ct);
         }
@@ -46,7 +44,6 @@ public class FtpUtils
             client.Port = config.Port;
 
             await client.Connect(ct);
-            // TODO: folder per user
             await client.SetWorkingDirectory("/files", ct);
             MemoryStream stream = new MemoryStream();
             await client.DownloadStream(stream, Path.Combine(userId, fileName), token: ct);

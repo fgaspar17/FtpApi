@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace FtpApi.Application.Services;
+﻿namespace FtpApi.Application.Services;
 
 public interface IFileDownloadService
 {
